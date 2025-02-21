@@ -20,7 +20,23 @@ struct ContentView: View {
         .foregroundColor(.white)
         .clipShape(.circle)
         .scaleEffect(animationAmount)
-        .animation(.default, value: animationAmount)
+        .blur(radius: (animationAmount - 1) * 3)
+        
+        //.animation(.default, value: animationAmount)
+        
+        //.animation(.spring(duration: 1,bounce: 0.9), value: animationAmount)
+        
+//        .animation(
+//            .easeIn(duration: 3)
+//            .repeatCount(2, autoreverses: true),
+//                value: animationAmount
+//        )
+        
+        .animation(
+            .easeIn(duration: 3)
+            .repeatForever(),
+                value: animationAmount
+        )
         
         
     }
