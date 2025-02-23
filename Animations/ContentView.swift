@@ -9,35 +9,49 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let letters = Array("Hello SwiftUI")
-    
-    @State private var enabled = false
-    @State private var amountDragged = CGSize.zero
-    
+    @State private var isRedShowing = false
     
     var body: some View {
-        
-        HStack(spacing: 0){
-            ForEach(0..<letters.count, id: \.self){ num in
-                Text(String(letters[num]))
-                    .padding(5)
-                    .font(.title)
-                    .background(enabled ? .blue : .red)
-                    .offset(amountDragged)
-                    .animation(.linear.delay(Double(num)/20), value: amountDragged)
-                   
+        ZStack{
+            Rectangle()
+                .fill(.blue)
+                .frame(width: 200, height: 200)
+            
+            if isRedShowing{
+                Rectangle()
+                    .fill(.red)
+                    .frame(width: 200, height: 200)
+                    .transition(.pivot)
             }
-        }//attach the gesture to whe whole HStack
-        .gesture(
-            DragGesture()
-                .onChanged{amountDragged = $0.translation}
-                .onEnded{ _ in
-                    amountDragged = .zero
-                    enabled.toggle()
-                }
-        )
+        }
+        .onTapGesture {
+            withAnimation {
+                isRedShowing.toggle()
+                
+            }
+        }
+        
     }
 }
+
+    struct CornerRotateModifier: ViewModifier{
+        let amount: Double
+        let anchor: UnitPoint //which part of the animation is pinned
+        
+        func body(content: Content) -> some View {
+            content
+                .rotationEffect(.degrees(amount), anchor: anchor )
+                .clipped()
+        }
+    }
+    
+    extension AnyTransition{
+        static var pivot: AnyTransition{
+            .modifier(active: CornerRotateModifier(amount: -90, anchor: .topLeading), identity: CornerRotateModifier(amount: 0, anchor: .topLeading))
+        }
+    }
+    
+    
 
 #Preview {
     ContentView()
